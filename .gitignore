@@ -1,0 +1,37 @@
+# MATLAB Files
+*.asv
+*.m~
+*.autosave
+
+# Simulink Files
+*.slxc
+slprj/
+*.autosave
+
+# Generated Outputs
+*.mat
+!phase1_metrics.mat
+
+# Compiled MEX
+*.mex*
+*.o
+
+# Figures (keep structure, regenerate content)
+# Uncomment if you want to ignore generated figures:
+# figs/*.png
+# figs/*.jpg
+# demo/demo_screenshots/*.png
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+github.txt
