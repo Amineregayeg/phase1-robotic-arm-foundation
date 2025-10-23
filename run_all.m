@@ -82,10 +82,10 @@ function metrics = run_all()
 
     %% 4. DEMONSTRATION
     fprintf('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-    fprintf('STEP 4: PICK-AND-PLACE DEMONSTRATION\n');
+    fprintf('STEP 4: CAMERA INSPECTION DEMONSTRATION\n');
     fprintf('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    demo_stats = demo_pick_place_script();
+    demo_stats = demo_camera_inspection_script();
 
     fprintf('\n');
 

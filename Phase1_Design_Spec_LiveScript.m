@@ -12,15 +12,16 @@
 %% 1. INTRODUCTION
 %
 % This document presents the Phase-1 foundation for a 5-DOF robotic arm
-% designed for automated pick-and-place operations in smart hydroponic
-% farming. The system targets a 4×8 tray grid with 6cm spacing at
-% z=0.15m height.
+% designed for automated computer vision inspection in smart hydroponic
+% farming. The system positions an end-effector-mounted camera over a 4×8
+% plant grid (6cm spacing) at z=0.15m for plant health monitoring, growth
+% tracking, and disease detection.
 %
 % *Key Objectives:*
 %
 % * Implement rigorous forward and inverse kinematics
 % * Analyze reachable workspace with ≥90% tray coverage
-% * Plan collision-free trajectories with constraint validation
+% * Plan smooth camera positioning trajectories with constraint validation
 % * Achieve university A+ quality standards
 %
 %% 2. REQUIREMENTS SUMMARY
@@ -207,8 +208,8 @@
 %
 % * FK/IK round-trip: 200 random configurations
 % * Workspace scan: 50,000 samples
-% * Trajectory validation: Multi-segment pick-place sequences
-% * Demo: 6 cells × 5 waypoints = 30 IK solutions
+% * Trajectory validation: Multi-segment camera positioning sequences
+% * Demo: 6 inspection points × 4 waypoints = 24 IK solutions
 %
 %% 9. RISKS & PHASE-2 PLAN
 %
@@ -225,9 +226,10 @@
 %
 % # Dynamics modeling (Lagrangian/Newton-Euler)
 % # Joint-level PID control with feedforward
-% # Perception integration (camera, depth sensor)
-% # ROS2/MoveIt integration
-% # Hardware prototype deployment
+% # Camera integration (RGB, depth) for actual plant imaging
+% # AI-based plant health analysis on captured images
+% # ROS2/MoveIt integration for system deployment
+% # Hardware prototype deployment with servo control
 % # Collision checking with environment model
 %
 %% 10. REFERENCES
@@ -243,12 +245,13 @@
 %
 % * Total reach: ~0.41m (sum of link lengths)
 % * Vertical offset: 0.10m (base height)
-% * Wrist flexibility: α_5 = π/2 for orientation control
+% * Wrist flexibility: α_5 = π/2 for camera orientation control
 %
-% Link lengths selected for hydroponic tray workspace:
+% Link lengths selected for hydroponic tray inspection workspace:
 %
-% * Tray center at ~(0.15, 0, 0.15) from base
-% * Allows ±0.12m in X, ±0.15m in Y at tray height
+% * Camera imaging height at z=0.15m (optimal focus distance)
+% * Inspection grid center at ~(0.15, 0, 0.15) from base
+% * Allows ±0.12m in X, ±0.15m in Y coverage over tray
 %
 %% APPENDIX B: FILE STRUCTURE
 %
@@ -271,7 +274,7 @@
 %   │   ├── test_workspace_function.m
 %   │   └── test_trajectory_function.m
 %   ├── demo/             % Demonstrations
-%   │   ├── demo_pick_place_script.m
+%   │   ├── demo_camera_inspection_script.m
 %   │   └── demo_screenshots/
 %   ├── sim/              % Simulink models
 %   │   ├── RA_Sim.slx
@@ -293,7 +296,7 @@
 % # Configuration load
 % # Workspace analysis (50k samples, ~60s)
 % # Unit tests (FK/IK/Workspace/Trajectory)
-% # Pick-place demo (6 cells)
+% # Camera inspection demo (6 inspection points)
 % # Simulink model build
 % # PASS metrics validation
 %

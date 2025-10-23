@@ -1,6 +1,6 @@
 # PHASE-1 STATUS REPORT
 
-**Project:** Robotic Arm for Smart Hydroponic Farming
+**Project:** Robotic Arm for Smart Hydroponic Farming (Computer Vision Inspection)
 **Phase:** 1 - Foundation & Modelling
 **Date:** 2025-10-22
 **Grade Target:** A+
@@ -40,7 +40,7 @@
 
 | Component | File | Status | Scope |
 |-----------|------|--------|-------|
-| Pick-Place Demo | `demo/demo_pick_place_script.m` | ✅ Complete | 6 cells × 5 waypoints |
+| Camera Inspection Demo | `demo/demo_camera_inspection_script.m` | ✅ Complete | 6 inspection points × 4 waypoints |
 | Statistics Export | Auto-generated CSV | ✅ Complete | All metrics |
 
 ### Simulink Model (100% Complete)
@@ -158,7 +158,7 @@ Repository Layout:
 - ✅ `/src` with all 9 required functions
 - ✅ `/tests` with 3 test suites + runner
 - ✅ `/figs` for auto-generated plots
-- ✅ `/demo` with pick-place script
+- ✅ `/demo` with camera inspection script
 - ✅ `README.md` with run instructions
 - ✅ Design spec (Live Script for PDF export)
 
@@ -197,8 +197,8 @@ Simulink:
 - ✅ Parameterized via config
 
 Demo:
-- ✅ 6-cell hydroponic demo
-- ✅ Pick-lift-place-retract sequence
+- ✅ 6-inspection-point hydroponic demo
+- ✅ Camera positioning sequence (approach-imaging-capture-retract)
 - ✅ Statistics export
 
 ### Quality Gates (Section 3) ✅
@@ -317,10 +317,11 @@ Design Spec:
 ## 📝 ASSUMPTIONS & NOTES
 
 1. **Execution Environment:** Assumes MATLAB R2023+ with standard libraries
-2. **Workspace Validity:** 5-DOF arm geometry designed for tray @ (0.15, 0, 0.15)
+2. **Workspace Validity:** 5-DOF arm geometry designed for camera imaging @ z=0.15m
 3. **IK Target:** Position + yaw (4-DOF) leaves 1-DOF redundancy
 4. **Singularity Strategy:** DLS handles gracefully; no explicit avoidance
 5. **Collision Model:** Simple z-clearance check; no full mesh collision (Phase-2)
+6. **Application:** Computer vision inspection - camera positioning for plant monitoring, not object manipulation
 
 ---
 

@@ -1,5 +1,9 @@
 function C = config()
-% CONFIG - Configuration parameters for 5-DOF robotic arm (hydroponic farming)
+% CONFIG - Configuration parameters for 5-DOF robotic arm (computer vision inspection)
+%
+% Application: Automated camera positioning for hydroponic plant inspection
+% Purpose: Navigate camera to inspection points above hydroponic tray for
+%          plant health monitoring, growth tracking, and disease detection
 %
 % Returns:
 %   C - struct containing all system parameters
@@ -38,19 +42,18 @@ function C = config()
     C.cond_threshold = 250;     % Condition number threshold for damping increase
     C.manip_threshold = 0.02;   % Manipulability threshold (warning)
 
-    % Hydroponic tray parameters
-    C.z_tray = 0.15;            % Tray height (m)
-    C.clearance = 0.02;         % Safety clearance margin (m)
-    C.z_lift = 0.08;            % Lift height above tray (m)
+    % Hydroponic tray parameters (Computer Vision Inspection)
+    C.z_tray = 0.15;            % Camera imaging height above tray (m) - optimal focus distance
+    C.clearance = 0.02;         % Safety clearance margin above plants (m)
+    C.z_transit = 0.08;         % Transit height above imaging position (m) for obstacle avoidance
 
-    % Pick/place grid parameters
-    C.gridNx = 8;               % Grid columns
-    C.gridNy = 4;               % Grid rows
-    C.gridDx = 0.06;            % Grid spacing X (m)
-    C.gridDy = 0.06;            % Grid spacing Y (m)
-    C.grid_x_offset = 0.15;     % Grid center X offset (m)
-    C.grid_y_offset = 0.0;      % Grid center Y offset (m)
-    C.place_y_offset = 0.25;    % Place grid Y offset (m)
+    % Inspection grid parameters (4×8 plant grid)
+    C.gridNx = 8;               % Grid columns (8 plants per row)
+    C.gridNy = 4;               % Grid rows (4 rows of plants)
+    C.gridDx = 0.06;            % Grid spacing X (m) - 60mm between plants
+    C.gridDy = 0.06;            % Grid spacing Y (m) - 60mm between rows
+    C.grid_x_offset = 0.15;     % Grid center X offset from robot base (m)
+    C.grid_y_offset = 0.0;      % Grid center Y offset from robot base (m)
 
     % Workspace analysis parameters
     C.workspace_samples = 50000; % Number of samples for workspace scan

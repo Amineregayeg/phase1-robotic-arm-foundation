@@ -8,17 +8,25 @@
 
 ## 📋 Overview
 
-This repository contains the **Phase-1 Foundation & Modelling** implementation for a 5-DOF robotic arm designed for automated pick-and-place operations in smart hydroponic farming. The system achieves university-grade quality with rigorous validation and reproducible results.
+This repository contains the **Phase-1 Foundation & Modelling** implementation for a 5-DOF robotic arm designed for **automated computer vision inspection** in smart hydroponic farming systems. The arm positions a camera over hydroponic trays to capture images for plant health monitoring, growth tracking, and disease detection. The system achieves university-grade quality with rigorous validation and reproducible results.
+
+### Application: Computer Vision Inspection
+
+The robotic arm autonomously navigates to designated inspection points above hydroponic trays, positioning an end-effector-mounted camera to:
+- **Monitor plant health** across 4×8 cell grid (32 plants)
+- **Capture overhead images** at consistent height and orientation
+- **Track growth progress** through repeated inspection cycles
+- **Enable AI-based disease detection** with standardized image acquisition
 
 ### Key Features
 
 - ✅ **Forward Kinematics** - Standard DH convention with orthonormality validation
 - ✅ **Inverse Kinematics** - Damped Least Squares with adaptive singularity handling
-- ✅ **Workspace Analysis** - 50,000 sample scan with 90%+ tray coverage
-- ✅ **Trajectory Planning** - Joint-space cubic & task-space LSPB with constraint validation
+- ✅ **Workspace Analysis** - 50,000 sample scan with 100% tray coverage
+- ✅ **Trajectory Planning** - Joint-space cubic & task-space LSPB for smooth camera motion
 - ✅ **Simulink Model** - Parameterized simulation harness
 - ✅ **Comprehensive Testing** - Unit tests with PASS/FAIL metrics
-- ✅ **Demo System** - Hydroponic tray pick-and-place demonstration
+- ✅ **Demo System** - Hydroponic tray inspection point navigation
 
 ---
 
@@ -41,7 +49,7 @@ This executes the complete pipeline:
 1. Configuration & setup
 2. Workspace analysis (50k samples, ~60 seconds)
 3. Unit tests (FK/IK/Workspace/Trajectory)
-4. Pick-place demo (6 cells)
+4. Camera inspection demo (6 inspection points)
 5. Simulink model build
 6. PASS metrics validation & reporting
 
@@ -69,7 +77,7 @@ phase1_foundation/
 │   ├── test_workspace_function.m
 │   └── test_trajectory_function.m
 ├── demo/                     # Demonstrations
-│   ├── demo_pick_place_script.m
+│   ├── demo_camera_inspection_script.m
 │   ├── demo_screenshots/
 │   └── demo_statistics.csv
 ├── sim/                      # Simulink models
@@ -111,12 +119,13 @@ All system parameters are centralized in `src/config.m`:
 - **Joint 3:** ±120°
 - **Joints 4,5:** ±180°
 
-### Hydroponic Tray Grid
+### Hydroponic Tray Inspection Grid
 
-- **Dimensions:** 4 rows × 8 columns = 32 cells
-- **Spacing:** 6 cm (60 mm)
-- **Tray Height:** z = 0.15 m
-- **Safety Clearance:** ≥ 2 cm
+- **Dimensions:** 4 rows × 8 columns = 32 inspection points (plants)
+- **Spacing:** 6 cm (60 mm) between plants
+- **Camera Height:** z = 0.15 m above tray (optimal focus distance)
+- **Safety Clearance:** ≥ 2 cm above plants during navigation
+- **Purpose:** Position camera for overhead plant imaging
 
 ### Modifying Parameters
 

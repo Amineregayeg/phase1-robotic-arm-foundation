@@ -1,18 +1,25 @@
-function stats = demo_pick_place_script()
-% DEMO_PICK_PLACE_SCRIPT - Hydroponic tray pick-and-place demonstration
+function stats = demo_camera_inspection_script()
+% DEMO_CAMERA_INSPECTION_SCRIPT - Hydroponic tray computer vision inspection
 %
-% Demonstrates robotic arm performing pick-and-place operations on a
-% hydroponic tray grid. Tests first 6 cells with complete trajectories.
+% Demonstrates robotic arm autonomously navigating to inspection points above
+% a hydroponic tray to position an end-effector-mounted camera for plant
+% health monitoring. Tests first 6 inspection points with complete trajectories.
+%
+% Application: Computer Vision-based Plant Monitoring
+% - Position camera at consistent height above each plant
+% - Maintain downward orientation for overhead imaging
+% - Navigate smoothly between inspection points
+% - Collect imaging statistics (position accuracy, stability)
 %
 % Returns:
-%   stats - Struct with demonstration statistics
+%   stats - Struct with inspection demonstration statistics
 %
 % Author: Phase-1 Foundation Team
 % Date: 2025-10-22
 
     fprintf('\n');
     fprintf('╔════════════════════════════════════════════════════════════╗\n');
-    fprintf('║     HYDROPONIC PICK-AND-PLACE DEMONSTRATION (6 CELLS)     ║\n');
+    fprintf('║  HYDROPONIC CAMERA INSPECTION DEMONSTRATION (6 PLANTS)     ║\n');
     fprintf('╚════════════════════════════════════════════════════════════╝\n');
     fprintf('\n');
 
@@ -31,35 +38,31 @@ function stats = demo_pick_place_script()
     stats.clearances = [];
     stats.errors = [];
 
-    % Generate pick and place grids
-    [pick_grid_x, pick_grid_y] = generate_grid(C, 0);
-    [place_grid_x, place_grid_y] = generate_grid(C, C.place_y_offset);
+    % Generate inspection grid (camera imaging points above each plant)
+    [inspection_grid_x, inspection_grid_y] = generate_inspection_grid(C);
 
-    % Demo first 6 cells
-    n_demo_cells = 6;
+    % Demo first 6 inspection points
+    n_demo_points = 6;
 
     % Setup visualization
     utils_plotting('setup');
     fig = figure('Position', [100, 100, 1200, 800]);
 
-    % Process each cell
-    for cell_idx = 1:n_demo_cells
-        fprintf('[Cell %d/%d] Processing...\n', cell_idx, n_demo_cells);
+    % Process each inspection point
+    for point_idx = 1:n_demo_points
+        fprintf('[Plant %d/%d] Inspecting...\n', point_idx, n_demo_points);
 
-        % Get pick and place positions
-        [row, col] = ind2sub([C.gridNy, C.gridNx], cell_idx);
-        pick_x = pick_grid_x(row, col);
-        pick_y = pick_grid_y(row, col);
-        place_x = place_grid_x(row, col);
-        place_y = place_grid_y(row, col);
+        % Get inspection point position
+        [row, col] = ind2sub([C.gridNy, C.gridNx], point_idx);
+        inspect_x = inspection_grid_x(row, col);
+        inspect_y = inspection_grid_y(row, col);
 
-        % Define waypoints: pick → lift → transit → place → retract
+        % Define waypoints: transit → imaging position → capture → return to transit
         waypoints = [
-            pick_x,  pick_y,  C.z_tray,           0;           % 1. Pick
-            pick_x,  pick_y,  C.z_tray + C.z_lift, 0;          % 2. Lift
-            place_x, place_y, C.z_tray + C.z_lift, 0;          % 3. Transit
-            place_x, place_y, C.z_tray,            0;          % 4. Place
-            place_x, place_y, C.z_tray + C.z_lift, 0           % 5. Retract
+            inspect_x,  inspect_y,  C.z_tray + C.z_transit, 0;    % 1. Approach (transit height)
+            inspect_x,  inspect_y,  C.z_tray,               0;    % 2. Imaging position (camera focus)
+            inspect_x,  inspect_y,  C.z_tray,               0;    % 3. Hold for capture (simulated)
+            inspect_x,  inspect_y,  C.z_tray + C.z_transit, 0     % 4. Retract to transit height
         ];
 
         % Attempt IK for each waypoint
@@ -95,16 +98,16 @@ function stats = demo_pick_place_script()
         end
 
         if cell_success
-            fprintf('  Cell %d: ✓ COMPLETE\n\n', cell_idx);
+            fprintf('  Plant %d: ✓ INSPECTION COMPLETE\n\n', point_idx);
         else
-            fprintf('  Cell %d: ✗ INCOMPLETE\n\n', cell_idx);
+            fprintf('  Plant %d: ✗ INSPECTION FAILED\n\n', point_idx);
         end
 
-        % Visualize arm configuration at pick position
-        if cell_idx <= 6
-            subplot(2, 3, cell_idx);
+        % Visualize arm configuration at imaging position
+        if point_idx <= 6
+            subplot(2, 3, point_idx);
             visualize_arm_config(q_prev, C);
-            title(sprintf('Cell %d: (%d,%d)', cell_idx, row, col), ...
+            title(sprintf('Plant %d: (%d,%d) - Camera Position', point_idx, row, col), ...
                   'FontSize', 12, 'FontWeight', 'bold');
         end
     end
@@ -119,18 +122,18 @@ function stats = demo_pick_place_script()
     stats.max_error = max(stats.errors);
 
     % Save visualization
-    utils_plotting('save', 'phase1_foundation/demo/demo_screenshots/arm_configurations.png');
+    utils_plotting('save', 'phase1_foundation/demo/demo_screenshots/camera_positions.png');
 
     % Print summary
     fprintf('╔════════════════════════════════════════════════════════════╗\n');
-    fprintf('║                   DEMONSTRATION SUMMARY                    ║\n');
+    fprintf('║              INSPECTION DEMONSTRATION SUMMARY              ║\n');
     fprintf('╚════════════════════════════════════════════════════════════╝\n');
-    fprintf('Success Rate: %.1f%% (%d/%d)\n', stats.success_rate*100, ...
+    fprintf('Inspection Success Rate: %.1f%% (%d/%d waypoints)\n', stats.success_rate*100, ...
             stats.n_success, stats.n_attempts);
     fprintf('IK Iterations: mean=%.1f, max=%d\n', stats.mean_iters, stats.max_iters);
-    fprintf('Condition Number: mean=%.1f, max=%.1f\n', stats.mean_cond, stats.max_cond);
-    fprintf('Position Error: mean=%.4fmm, max=%.4fmm\n', ...
+    fprintf('Camera Position Accuracy: mean=%.4fmm, max=%.4fmm\n', ...
             stats.mean_error*1000, stats.max_error*1000);
+    fprintf('Manipulability: cond(J) mean=%.1f, max=%.1f\n', stats.mean_cond, stats.max_cond);
     fprintf('\n');
 
     % Export statistics to CSV
@@ -146,11 +149,14 @@ function stats = demo_pick_place_script()
 end
 
 
-function [grid_x, grid_y] = generate_grid(C, y_offset)
-% Generate grid positions
+function [grid_x, grid_y] = generate_inspection_grid(C)
+% Generate inspection grid positions (camera imaging points above plants)
+%
+% Returns grid of (x,y) coordinates where camera should be positioned
+% for overhead imaging of each plant in the hydroponic tray
 
     x_start = C.grid_x_offset - (C.gridNx-1)*C.gridDx/2;
-    y_start = C.grid_y_offset + y_offset - (C.gridNy-1)*C.gridDy/2;
+    y_start = C.grid_y_offset - (C.gridNy-1)*C.gridDy/2;
 
     x_vec = x_start + (0:C.gridNx-1) * C.gridDx;
     y_vec = y_start + (0:C.gridNy-1) * C.gridDy;
