@@ -68,6 +68,7 @@ function stats = demo_camera_inspection_script()
         % Attempt IK for each waypoint
         cell_success = true;
         q_prev = zeros(C.n, 1);  % Start from home
+        q_imaging = zeros(C.n, 1);  % Store imaging position for visualization
 
         for wp_idx = 1:size(waypoints, 1)
             target = waypoints(wp_idx, :)';
@@ -88,6 +89,11 @@ function stats = demo_camera_inspection_script()
                 stats.n_success = stats.n_success + 1;
                 q_prev = q_sol;  % Update for next waypoint
 
+                % Store imaging position (waypoint 2) for visualization
+                if wp_idx == 2
+                    q_imaging = q_sol;
+                end
+
                 fprintf('  WP%d: ✓ Success (iters=%d, cond=%.1f, err=%.4fmm)\n', ...
                         wp_idx, iters, cond_J, final_error(1)*1000);
             else
@@ -106,7 +112,7 @@ function stats = demo_camera_inspection_script()
         % Visualize arm configuration at imaging position
         if point_idx <= 6
             subplot(2, 3, point_idx);
-            visualize_arm_config(q_prev, C);
+            visualize_arm_config(q_imaging, C);
             title(sprintf('Plant %d: (%d,%d) - Camera Position', point_idx, row, col), ...
                   'FontSize', 12, 'FontWeight', 'bold');
         end
